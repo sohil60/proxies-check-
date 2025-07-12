@@ -1,17 +1,17 @@
 
-import os
 import requests
-from telegram import Update, ForceReply
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = "YOUR_BOT_TOKEN"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("أهلاً بك! أرسل IP أو بروكسي لفحصه.")
+    await update.message.reply_text("أهلاً! أرسل عنوان IP لفحصه من خلال عدة مواقع.")
 
 async def check_ip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ip = update.message.text.strip()
     results = []
+
     for service in [
         f"https://ipinfo.io/{ip}/json",
         f"https://ip-api.com/json/{ip}",
@@ -20,13 +20,13 @@ async def check_ip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
             res = requests.get(service, timeout=5)
             if res.ok:
-                results.append(f"[{service}]
-{res.text}")
+                results.append(f"[{service}]\n{res.text}")
+            else:
+                results.append(f"[{service}] Request failed with status code {res.status_code}")
         except Exception as e:
-            results.append(f"[{service}] Error: {e}")
-    reply = "
+            results.append(f"[{service}] Error: {str(e)}")
 
-".join(results) if results else "فشل الفحص."
+    reply = "\n\n".join(results) if results else "الفحص فشل."
     await update.message.reply_text(reply)
 
 def main() -> None:
@@ -37,4 +37,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    
