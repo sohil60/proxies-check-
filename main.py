@@ -1,4 +1,3 @@
-
 import requests
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
@@ -6,7 +5,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 TOKEN = "YOUR_BOT_TOKEN_HERE"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("أهلاً! أرسل عنوان IP لفحصه.")
+    await update.message.reply_text("أرسل عنوان IP لفحصه.")
 
 async def check_ip(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ip = update.message.text.strip()
@@ -21,11 +20,12 @@ async def check_ip(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if res.ok:
                 results.append(f"[{service}] {res.text}")
             else:
-                results.append(f"[{service}] Request failed with status code {res.status_code}")
+                results.append(f"[{service}] خطأ بالرد.")
         except Exception as e:
-            results.append(f"[{service}] Error: {str(e)}")
-    reply = "\n\n".join(results) if results else "الفحص فشل."
+            results.append(f"[{service}] Error: {e}")
+    reply = "\n".join(results) if results else "الفحص فشل."
     await update.message.reply_text(reply)
+
 def main() -> None:
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
