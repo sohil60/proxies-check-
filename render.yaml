@@ -1,0 +1,11 @@
+
+services:
+  - type: web
+    name: telegram-proxy-checker
+    env: python
+    buildCommand: ""
+    startCommand: "python main.py"
+    envVars:
+      - key: BOT_TOKEN
+        value: your_telegram_bot_token_here
+    
